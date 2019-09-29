@@ -1,0 +1,170 @@
+<div class="row">
+    <div class="col-sm-12 forms">
+
+        <div class="page-header">
+            <h4>Create Table</h4>
+        </div>
+        <div>
+            <h6>General info</h6>
+            <form>
+                <div class="form-group">
+                    <label>How many test groups do you have?</label>              
+                    <input type="number" class="form-control" ng-model = "TestGroup"> 
+                </div>
+                <div class="form-group">
+                    <label>How many target genes do you have?</label>              
+                    <input type="number" class="form-control" ng-model = "TargetGene"> 
+                </div> 
+                <div class="form-group">
+                    <label>How many biological replicates are there in your control group?</label>              
+                    <input type="number" class="form-control" ng-model = "Brep"> 
+                </div> 
+                <div class="form-group">
+                    <label>How many technical replicates are there in each of your samples?</label>              
+                    <input type="number" class="form-control" ng-model = "Trep"> 
+                </div>
+                <div class="form-group">
+                    <label>what are the names of your genes?(Including house-keeping gene, seperate by space )</label>              
+                    <input type="text" class="form-control" ng-model = "GeneNames"> 
+                </div>                         
+                <button type="submit" class="btn btn-primary" ng-click = "AddParameter()">Submit</button>      
+            </form>
+        </div>
+        <div>
+            <h6>Test Group info</h6>
+            <form>
+                <div ng-repeat = "testgroup in Groups track by $index "  ng-init = 'x = $index'>
+                    <div class="form-group">
+                        <label>Give group {{ x +1 }} a name?</label>              
+                        <input type="text" class="form-control" ng-model = "Groups[x].name"> 
+                    </div> 
+                    <div class="form-group">
+                        <label>How many biological replicates are there in Test Group {{ x + 1 }}?</label>              
+                        <input type="number" class="form-control" ng-model = "Groups[x].br"> 
+                    </div>
+                    <div class="form-group">
+                        <label>How many technical replicates are there in Test Group {{ x + 1 }}?</label>              
+                        <input type="number" class="form-control" ng-model = "Groups[x].tr"> 
+                    </div>
+                </div>                           
+                <button type="submit" class="btn btn-primary" ng-click = "AddGroups()">Submit</button>      
+            </form>
+        </div> 
+        <div >
+            <div class="page-header">            
+               <h4>Data Tables</h4>        
+           </div>        
+           <div class="panel panel-primary">            
+            <div class="panel-heading">                
+                <h4 class="panel-title">                    
+                   <p>Input Data</p>
+               </h4>            
+           </div>                       
+           <div class="panel-body">
+            <h>Control Group</h>
+            <table class="table table-bordered " >
+                <tr>
+                    <th></th>
+                    <th ng-repeat = "name in list.GeneNames track by $index"> {{ name }}</th>
+                </tr>  
+                <tr ng-repeat = "row in table track by $index " ng-init = 'i = $index'>
+                    <td id = "controlgroupname" ng-if = "showRowControl(i)" rowspan = "{{ list.Trep }}">Control Group {{ (i/list.Trep)+1}}</td>
+                    <td ng-repeat = "col in row track by $index" ng-init = 'j = $index'> 
+                        <input type ="text" class="form-control" ng-model = "table[i][j]">
+                    </td>
+                </tr>        
+            </table>
+            <br>  
+            <div ng-repeat = "ttable in TestGroupTables track by $index" ng-init = "x = $index">
+                <h>Test Group {{ x +1 }}</h>
+                <table class="table table-bordered ">
+                    <tr>
+                        <th></th>
+                        <th ng-repeat = "name in list.GeneNames track by $index"> {{ name }}</th>
+                    </tr>  
+                    <tr ng-repeat = "row in ttable track by $index " ng-init = 'i = $index'>
+                        <td id = "groupname" ng-if = "showRowTest(x,i)" rowspan="{{ Groups[x].tr }}">{{ Groups[x].name }} {{ i/Groups[x].tr +1 }}</td>
+                        <td ng-repeat = "col in row track by $index" ng-init = 'j = $index'> 
+                            <input type ="text" class="form-control" ng-model = "ttable[i][j]">
+                        </td>
+                    </tr>        
+                </table>  
+            </div>
+            <button type="submit" class="btn btn-primary" ng-click = "AddTable()">Submit</button>    
+        </div>
+    </div>
+    <h4>result</h4>
+    <div ng-repeat = "a in resultTable track by $index" ng-init =  "x= $index">
+        <table class="table table-bordered ">
+            <tr>
+                <th>Gene</th>
+                <th ng-repeat = "name in list.GeneNames track by $index" ng-init="width= $index" colspan="{{ colWidth[width] }}"> {{ name }}</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th ng-repeat ="defi in definition track by $index"> {{ defi }}</th>
+            </tr> 
+            <tr ng-repeat = "row in a track by $index " ng-init = 'i = $index'>
+                <td ng-if = " x ==0"> Control Group {{ i+1 }}</td>
+                <td ng-if = " x > 0"> {{Groups[x-1].name}} {{ i+1 }}
+                <td ng-repeat = "col in row track by $index" ng-init = 'j = $index' > 
+                   {{ a[i][j] }}
+               </td>
+           </tr>        
+       </table>  
+   </div>
+   <!--exportable invisible table -->
+   <div hidden id="exportable">
+    <table class="table table-bordered " >
+        <tr>
+            <th></th>
+            <th ng-repeat = "name in list.GeneNames track by $index"> {{ name }}</th>
+        </tr>  
+        <tr ng-repeat = "row in table track by $index " ng-init = 'i = $index'>
+            <td id = "controlgroupname" ng-if = "showRowControl(i)" rowspan = "{{ list.Trep }}">Control Group {{ (i/list.Trep)+1}}</td>
+            <td ng-repeat = "col in row track by $index" ng-init = 'j = $index'> 
+                {{ table[i][j] }}
+            </td>
+        </tr>        
+    </table>
+    <br>  
+    <div ng-repeat = "ttable in TestGroupTables track by $index" ng-init = "x = $index">
+        <table class="table table-bordered ">
+            <tr>
+                <th></th>
+                <th ng-repeat = "name in list.GeneNames track by $index"> {{ name }}</th>
+            </tr>  
+            <tr ng-repeat = "row in ttable track by $index " ng-init = 'i = $index'>
+                <td id = "groupname" ng-if = "showRowTest(x,i)" rowspan="{{ Groups[x].tr }}">{{ Groups[x].name }} {{ i/Groups[x].tr +1 }}</td>
+                <td ng-repeat = "col in row track by $index" ng-init = 'j = $index'> 
+                    {{ ttable[i][j] }}
+                </td>
+            </tr>        
+        </table>  
+    </div>
+    <div ng-repeat = "a in resultTable track by $index" ng-init =  "x= $index">
+        <table class="table table-bordered ">
+            <tr>
+                <th>Genes</th>
+                <th ng-repeat = "name in list.GeneNames track by $index" ng-init="width= $index" colspan="{{ colWidth[width] }}"> {{ name }}</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th ng-repeat ="defi in definition track by $index"> {{ defi }}</th>
+            </tr> 
+            <tr ng-repeat = "row in a track by $index " ng-init = 'i = $index'>
+                <td ng-if = " x ==0"> Control Group {{ i +1 }}</td>
+                <td ng-if = " x > 0"> {{Groups[x-1].name}} {{ i +1 }}
+                <td ng-repeat = "col in row track by $index" ng-init = 'j = $index' > 
+                   {{ a[i][j] }}
+               </td>
+           </tr>        
+       </table>  
+   </div>          
+</div>
+
+</div>
+<button class = "btn btn-outline-dark" ng-click="exportData()">Export</button>
+</div>
+
+</div>
