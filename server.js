@@ -11,6 +11,8 @@ app.use(routes())
 app.get('/', function(req, res){
    res.send("Hello World!");
 });
-app.listen(80, () => {
+
+const port = process.env.PORT || 80;
+app.listen(port, () => {
     console.log('Server Running')
 })
