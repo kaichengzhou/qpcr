@@ -12,7 +12,8 @@ app.get('/', function(req, res){
    res.send("Hello World!");
 });
 
+const host = '0.0.0.0';
 const port = process.env.PORT || 80;
-app.listen(port, () => {
+app.listen(port, host, () => {
     console.log('Server Running')
 })
