@@ -19,6 +19,6 @@
     "jquery-filepond": "^1.0.0",
     "superagent": "^3.5.1",
     "tableexport": "^5.2.0",
-    "tableexport.jquery.plugin": "^1.10.5"
+    "tableexport.jquery.plugin": "^1.25.0"
   }
 }
